@@ -168,6 +168,26 @@ const fillRect = (x, y, w, h, color, showLevel = NORMAL) =>
 const setText = (widget, value) =>
   widget.setProperty(hmUI.prop.TEXT, `${value}`)
 
+const alignLeftMetricLabel = (widget, value, labelDesignX = 70) => {
+  const fallbackWidth = scaleSize(`${value}`.length * 15)
+  const valueWidth = safeCall(
+    () =>
+      hmUI.getTextLayout(`${value}`, {
+        text_size: scaleSize(26),
+        text_width: 0,
+        wrapped: 0,
+        font: FONT_EXTRABOLD,
+      }).width,
+    fallbackWidth
+  )
+  const labelX = scaleX(labelDesignX)
+  const valueRight = scaleX(201)
+  const pairGap = scaleX(14)
+  const labelRight = valueRight - valueWidth - pairGap
+
+  widget.setProperty(hmUI.prop.W, Math.max(labelRight - labelX, 1))
+}
+
 const createWeatherNumber = ({
   x,
   y,
@@ -301,22 +321,35 @@ WatchFace({
       font: FONT_SEMIBOLD,
       charSpace: 2,
     })
-    text({
-      x: 55,
-      y: 418,
-      w: 64,
-      h: 28,
+    this.spo2Label = text({
+      x: 70,
+      y: 414,
+      w: 77,
+      h: 36,
       value: 'SpO₂',
       size: 14,
       color: COLORS.muted,
       font: FONT_SEMIBOLD,
+      align: hmUI.align.RIGHT,
+      charSpace: 2,
+    })
+    this.standLabel = text({
+      x: 26,
+      y: 452,
+      w: 121,
+      h: 36,
+      value: 'STAND',
+      size: 14,
+      color: COLORS.muted,
+      font: FONT_SEMIBOLD,
+      align: hmUI.align.RIGHT,
       charSpace: 2,
     })
     text({
-      x: 55,
-      y: 456,
-      w: 64,
-      h: 28,
+      x: 230,
+      y: 414,
+      w: 32,
+      h: 36,
       value: 'PAI',
       size: 14,
       color: COLORS.muted,
@@ -325,20 +358,9 @@ WatchFace({
     })
     text({
       x: 230,
-      y: 418,
+      y: 452,
       w: 70,
-      h: 28,
-      value: 'STAND',
-      size: 14,
-      color: COLORS.muted,
-      font: FONT_SEMIBOLD,
-      charSpace: 2,
-    })
-    text({
-      x: 230,
-      y: 456,
-      w: 70,
-      h: 28,
+      h: 36,
       value: 'STRESS',
       size: 14,
       color: COLORS.muted,
@@ -634,19 +656,20 @@ WatchFace({
     })
 
     this.spo2Value = text({
-      x: 125,
+      x: 156,
       y: 414,
-      w: 58,
+      w: 45,
       h: 36,
       value: '98',
       size: 26,
       color: COLORS.white,
       font: FONT_EXTRABOLD,
+      align: hmUI.align.RIGHT,
     })
     this.paiValue = text({
-      x: 125,
-      y: 452,
-      w: 58,
+      x: 276,
+      y: 414,
+      w: 45,
       h: 36,
       value: '118',
       size: 26,
@@ -654,17 +677,18 @@ WatchFace({
       font: FONT_EXTRABOLD,
     })
     this.standValue = text({
-      x: 300,
-      y: 414,
-      w: 82,
+      x: 130,
+      y: 452,
+      w: 71,
       h: 36,
       value: '9/12',
       size: 26,
       color: COLORS.white,
       font: FONT_EXTRABOLD,
+      align: hmUI.align.RIGHT,
     })
     this.stressValue = text({
-      x: 300,
+      x: 312,
       y: 452,
       w: 82,
       h: 36,
@@ -697,6 +721,8 @@ WatchFace({
       )
       const stressResult = safeCall(() => this.stress.getCurrent(), {})
       const spo2Result = safeCall(() => this.spo2.getCurrent(), {})
+      const spo2 = safeNumber(spo2Result.value)
+      const pai = safeNumber(safeCall(() => this.pai.getTotal(), 0))
       const stand = safeNumber(safeCall(() => this.stand.getCurrent(), 0))
       const standTarget = safeNumber(safeCall(() => this.stand.getTarget(), 12), 12)
 
@@ -721,9 +747,11 @@ WatchFace({
         this.sleepValue,
         compactDuration(sleepMinutes)
       )
-      setText(this.spo2Value, safeNumber(spo2Result.value))
-      setText(this.paiValue, safeNumber(safeCall(() => this.pai.getTotal(), 0)))
+      setText(this.spo2Value, spo2)
+      setText(this.paiValue, pai)
+      alignLeftMetricLabel(this.spo2Label, spo2)
       setText(this.standValue, `${stand}/${standTarget}`)
+      alignLeftMetricLabel(this.standLabel, `${stand}/${standTarget}`, 26)
       setText(this.stressValue, safeNumber(stressResult.value))
 
       const stepWidth = Math.round(175 * clamp(steps / Math.max(stepTarget, 1), 0, 1))
