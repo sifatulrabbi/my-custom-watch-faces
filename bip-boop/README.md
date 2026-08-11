@@ -4,7 +4,11 @@
 
 ## Current design
 
-The regular face uses the supplied dark modernist grid, Archivo typography, orange progress accents, weather row, activity panels, and curved edge treatment. Its live values are time, date, battery, steps and target, calories and target, heart rate, sleep duration and goal progress, SpO2, PAI, standing progress, stress, current temperature, humidity, and the current weather label when available.
+The regular face uses the supplied dark modernist grid, Archivo typography, orange progress accents, weather row, activity panels, and curved edge treatment. Its live values are time, date, battery, steps and target, calories and target, heart rate, sleep duration and goal progress, SpO2, PAI, standing progress, stress, current temperature, humidity, and the current weather condition when available. The condition text is mapped from the watch weather forecast index; missing or index-25 data is shown as `Unknown` rather than a fixed condition. The percentage beside the droplet is live humidity—not precipitation probability, which Zepp's watch-face data bindings do not expose.
+
+The sleep header reads the user-configured sleep goal through Zepp OS's `getSleepTarget()` settings API (minutes). Zepp returns `0` when no goal is available, so the face deliberately shows `--` rather than inventing a goal.
+
+The heart-rate progress bar treats 40 BPM as its lower bound and uses the age-based estimate `220 - age` as its upper bound. If the user age is unavailable, it falls back to 220 BPM. This is a visualization scale rather than a medical target or diagnosis.
 
 The AOD version preserves the supplied black composition, outlined time, date, battery, temperature, weather label, and humidity while omitting the lower activity grid. The watch-face manifest enables its screen-off presentation with `lockscreen: 1`; the watch must be configured to have AOD follow the current watch face.
 
