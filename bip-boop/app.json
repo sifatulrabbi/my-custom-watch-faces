@@ -6,8 +6,8 @@
     "appType": "watchface",
     "_pikeCompatibled": 1,
     "version": {
-      "code": 1,
-      "name": "1.0.0"
+      "code": 2,
+      "name": "1.0.1"
     },
     "icon": "icon.png",
     "vender": "sifatul",

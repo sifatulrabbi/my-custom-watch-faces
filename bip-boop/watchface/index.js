@@ -116,6 +116,14 @@ const compactTarget = (value) => {
   if (number >= 1000) return `${(number / 1000).toFixed(1)}K`
   return `${number}`
 }
+const compactDuration = (minutes) => {
+  const totalMinutes = Math.round(safeNumber(minutes))
+  const hours = Math.floor(totalMinutes / 60)
+  const remainingMinutes = totalMinutes % 60
+
+  if (remainingMinutes === 0) return `${hours}H`
+  return `${hours}H${pad2(remainingMinutes)}`
+}
 
 const text = ({
   x,
@@ -250,9 +258,21 @@ WatchFace({
     text({
       x: 29,
       y: 320,
-      w: 150,
+      w: 62,
       h: 28,
-      value: 'HEART · BPM',
+      value: 'HEART',
+      size: 14,
+      color: COLORS.muted,
+      font: FONT_SEMIBOLD,
+      charSpace: 2,
+    })
+    fillRect(96, 332, 4, 4, COLORS.muted)
+    text({
+      x: 111,
+      y: 320,
+      w: 68,
+      h: 28,
+      value: 'BPM',
       size: 14,
       color: COLORS.muted,
       font: FONT_SEMIBOLD,
@@ -261,9 +281,21 @@ WatchFace({
     text({
       x: 230,
       y: 320,
-      w: 176,
+      w: 66,
       h: 28,
-      value: 'SLEEP · QUALITY',
+      value: 'SLEEP',
+      size: 14,
+      color: COLORS.muted,
+      font: FONT_SEMIBOLD,
+      charSpace: 2,
+    })
+    fillRect(301, 332, 4, 4, COLORS.muted)
+    this.sleepGoalLabel = text({
+      x: 316,
+      y: 320,
+      w: 90,
+      h: 28,
+      value: '--',
       size: 14,
       color: COLORS.muted,
       font: FONT_SEMIBOLD,
@@ -271,7 +303,7 @@ WatchFace({
     })
     text({
       x: 55,
-      y: 421,
+      y: 418,
       w: 64,
       h: 28,
       value: 'SpO₂',
@@ -282,7 +314,7 @@ WatchFace({
     })
     text({
       x: 55,
-      y: 459,
+      y: 456,
       w: 64,
       h: 28,
       value: 'PAI',
@@ -293,7 +325,7 @@ WatchFace({
     })
     text({
       x: 230,
-      y: 421,
+      y: 418,
       w: 70,
       h: 28,
       value: 'STAND',
@@ -304,7 +336,7 @@ WatchFace({
     })
     text({
       x: 230,
-      y: 459,
+      y: 456,
       w: 70,
       h: 28,
       value: 'STRESS',
@@ -501,12 +533,24 @@ WatchFace({
       showLevel: AOD,
     })
 
-    this.stepsLabel = text({
+    text({
       x: 26,
       y: 225,
-      w: 175,
+      w: 62,
       h: 28,
-      value: 'STEPS · 10K',
+      value: 'STEPS',
+      size: 14,
+      color: COLORS.muted,
+      font: FONT_SEMIBOLD,
+      charSpace: 2,
+    })
+    fillRect(93, 237, 4, 4, COLORS.muted)
+    this.stepsGoalLabel = text({
+      x: 108,
+      y: 225,
+      w: 93,
+      h: 28,
+      value: '10K',
       size: 14,
       color: COLORS.muted,
       font: FONT_SEMIBOLD,
@@ -524,12 +568,24 @@ WatchFace({
       charSpace: -1,
     })
 
-    this.caloriesLabel = text({
+    text({
       x: 231,
       y: 225,
-      w: 175,
+      w: 52,
       h: 28,
-      value: 'KCAL · 600',
+      value: 'KCAL',
+      size: 14,
+      color: COLORS.muted,
+      font: FONT_SEMIBOLD,
+      charSpace: 2,
+    })
+    fillRect(288, 237, 4, 4, COLORS.muted)
+    this.caloriesGoalLabel = text({
+      x: 303,
+      y: 225,
+      w: 103,
+      h: 28,
+      value: '600',
       size: 14,
       color: COLORS.muted,
       font: FONT_SEMIBOLD,
@@ -636,7 +692,9 @@ WatchFace({
       const heart = safeNumber(safeCall(() => this.heart.getLast(), 0))
       const sleepInfo = safeCall(() => this.sleep.getInfo(), {})
       const sleepMinutes = safeNumber(sleepInfo.totalTime)
-      const sleepScore = safeNumber(sleepInfo.score)
+      const sleepTarget = safeNumber(
+        safeCall(() => hmSetting.getSleepTarget(), 0)
+      )
       const stressResult = safeCall(() => this.stress.getCurrent(), {})
       const spo2Result = safeCall(() => this.spo2.getCurrent(), {})
       const stand = safeNumber(safeCall(() => this.stand.getCurrent(), 0))
@@ -650,16 +708,18 @@ WatchFace({
       this.aodTimeOutline.forEach((widget) => setText(widget, timeValue))
       setText(this.aodTimeFill, timeValue)
 
-      setText(this.stepsLabel, `STEPS · ${compactTarget(stepTarget)}`)
+      setText(this.stepsGoalLabel, compactTarget(stepTarget))
       setText(this.stepsValue, formatThousands(steps))
-      setText(this.caloriesLabel, `KCAL · ${formatThousands(calorieTarget)}`)
+      setText(this.caloriesGoalLabel, formatThousands(calorieTarget))
       setText(this.caloriesValue, formatThousands(calories))
       setText(this.heartValue, heart)
       setText(
+        this.sleepGoalLabel,
+        sleepTarget > 0 ? compactDuration(sleepTarget) : '--'
+      )
+      setText(
         this.sleepValue,
-        sleepMinutes > 0
-          ? `${Math.floor(sleepMinutes / 60)}H${pad2(sleepMinutes % 60)}`
-          : '0H00'
+        compactDuration(sleepMinutes)
       )
       setText(this.spo2Value, safeNumber(spo2Result.value))
       setText(this.paiValue, safeNumber(safeCall(() => this.pai.getTotal(), 0)))
@@ -670,7 +730,9 @@ WatchFace({
       const calorieWidth = Math.round(
         175 * clamp(calories / Math.max(calorieTarget, 1), 0, 1)
       )
-      const sleepWidth = Math.round(171 * clamp(sleepScore / 100, 0, 1))
+      const sleepWidth = Math.round(
+        171 * clamp(sleepMinutes / Math.max(sleepTarget, 1), 0, 1)
+      )
       this.stepsProgress.setProperty(hmUI.prop.W, scaleX(Math.max(stepWidth, 1)))
       this.caloriesProgress.setProperty(hmUI.prop.W, scaleX(Math.max(calorieWidth, 1)))
       this.sleepProgress.setProperty(hmUI.prop.W, scaleX(Math.max(sleepWidth, 1)))

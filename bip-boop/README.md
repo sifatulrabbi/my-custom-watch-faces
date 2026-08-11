@@ -4,7 +4,7 @@
 
 ## Current design
 
-The regular face uses the supplied dark modernist grid, Archivo typography, orange progress accents, weather row, activity panels, and curved edge treatment. Its live values are time, date, battery, steps and target, calories and target, heart rate, sleep duration and quality, SpO2, PAI, standing progress, stress, current temperature, humidity, and the current weather label when available.
+The regular face uses the supplied dark modernist grid, Archivo typography, orange progress accents, weather row, activity panels, and curved edge treatment. Its live values are time, date, battery, steps and target, calories and target, heart rate, sleep duration and goal progress, SpO2, PAI, standing progress, stress, current temperature, humidity, and the current weather label when available.
 
 The AOD version preserves the supplied black composition, outlined time, date, battery, temperature, weather label, and humidity while omitting the lower activity grid.
 
