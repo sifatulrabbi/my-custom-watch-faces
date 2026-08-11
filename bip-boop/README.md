@@ -1,6 +1,6 @@
-# Bip Boop
+# bip-boop-plain-orange
 
-`Bip Boop` is a coded Zepp OS watch-face project for the **Amazfit Bip Max**. It implements the supplied 432 x 514 regular and always-on display designs with live Zepp health and system data.
+`bip-boop-plain-orange` is a coded Zepp OS watch-face project for the **Amazfit Bip Max**. It implements the supplied 432 x 514 regular and always-on display designs with live Zepp health and system data. Its repository directory remains `bip-boop`.
 
 ## Current design
 
@@ -162,9 +162,9 @@ bip-boop/
 | Fallback `zeus build` | Passed against the generated Bip 6 target and resized assets |
 | `npm run dev`, choosing Bip 6 target | Expected failure: `no matching target devices` |
 | `npm run dev`, choosing Bip Max target | Built, connected, installed/refreshed but is not a native Bip 6 package |
-| `npm run dev:bip6`, choosing Bip 6 | Built, connected, and installed as `Bip Boop Preview` without changing production target configuration |
+| `npm run dev:bip6`, choosing Bip 6 | Built, connected, and installed as `bip-boop-plain-orange Preview` without changing production target configuration |
 | Hot reload | Passed; source change rebuilt and refreshed |
-| Bip Boop fallback runtime | Corrected to Zepp OS 2.0 module imports; latest simulator run logged no new runtime error |
+| Bip 6 fallback runtime | Corrected to Zepp OS 2.0 module imports; latest simulator run logged no new runtime error |
 | Final regular/AOD visual check | Pending owner-run simulator test as requested |
 | `zeus preview` | Not run; requires explicit authorization to upload the package plus possible Zepp login/QR scan |
 | Real Bip Max installation | Manual owner step remains |

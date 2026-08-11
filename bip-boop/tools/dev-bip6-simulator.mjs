@@ -22,7 +22,7 @@ const previewConfig = {
   ...productionConfig,
   app: {
     ...productionConfig.app,
-    appName: 'Bip Boop Preview',
+    appName: 'bip-boop-plain-orange Preview',
     description: 'Simulator-only Bip 6 preview of the Bip Max watch face',
   },
   targets: {
@@ -56,7 +56,7 @@ const previewConfig = {
   },
   i18n: {
     'en-US': {
-      appName: 'Bip Boop Preview',
+      appName: 'bip-boop-plain-orange Preview',
     },
   },
 }

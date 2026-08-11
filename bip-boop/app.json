@@ -1,13 +1,13 @@
 {
   "configVersion": "v3",
   "app": {
-    "appId": 23541,
-    "appName": "Bip Boop",
+    "appId": 1123204,
+    "appName": "bip-boop-plain-orange",
     "appType": "watchface",
     "_pikeCompatibled": 1,
     "version": {
-      "code": 12,
-      "name": "1.0.11"
+      "code": 1,
+      "name": "1.00"
     },
     "icon": "icon.png",
     "vender": "sifatul",
@@ -55,7 +55,7 @@
   },
   "i18n": {
     "en-US": {
-      "appName": "Bip Boop"
+      "appName": "bip-boop-plain-orange"
     }
   },
   "defaultLanguage": "en-US"

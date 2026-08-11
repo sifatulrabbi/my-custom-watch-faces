@@ -1,4 +1,4 @@
-# Bip Boop development handoff
+# bip-boop-plain-orange development handoff
 
 Project: custom Amazfit Bip Max watch face
 
