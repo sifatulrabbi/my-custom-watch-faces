@@ -1,0 +1,12 @@
+# macOS
+.DS_Store
+
+# Node tooling
+node_modules/
+npm-debug.log*
+
+# Zeus generated output and caches
+dist/
+.zeus/
+.simulator/
+*.zab

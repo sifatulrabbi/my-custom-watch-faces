@@ -1,0 +1,13 @@
+{
+  "name": "bip-boop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimal coded watch face for Amazfit Bip Max",
+  "scripts": {
+    "dev": "zeus dev",
+    "dev:bip6": "node tools/dev-bip6-simulator.mjs",
+    "prepare:bip6": "node tools/dev-bip6-simulator.mjs --prepare-only",
+    "build": "zeus build",
+    "preview": "zeus preview"
+  }
+}
