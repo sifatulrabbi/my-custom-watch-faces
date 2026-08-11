@@ -322,7 +322,9 @@ WatchFace({
       show_level: AOD,
     });
 
-    fillRect(73, 52, 286, 3, COLORS.orange);
+    fillRect(173, 52, 22, 3, COLORS.orange);
+    fillRect(205, 52, 22, 3, COLORS.orange);
+    fillRect(237, 52, 22, 3, COLORS.orange);
     fillRect(0, 312, 432, 2, 0x646261);
     fillRect(0, 408, 432, 2, 0x646261);
     fillRect(215, 219, 2, 285, 0x646261);
