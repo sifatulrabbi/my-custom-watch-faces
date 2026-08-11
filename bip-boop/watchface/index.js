@@ -39,6 +39,7 @@ const COLORS = {
 const FONT_REGULAR = "fonts/archivo-regular.ttf";
 const FONT_SEMIBOLD = "fonts/archivo-semibold.ttf";
 const FONT_EXTRABOLD = "fonts/archivo-extrabold.ttf";
+const WEATHER_TEXT_SIZE = 17;
 const NORMAL = hmUI.show_level.ONLY_NORMAL;
 const AOD = hmUI.show_level.ONAL_AOD;
 
@@ -216,8 +217,7 @@ const centerCompoundTitle = ({
   const valueBoxWidth = valueWidth + scaleX(5);
   const separatorWidth = scaleX(4);
   const gap = scaleX(9);
-  const totalWidth =
-    labelBoxWidth + separatorWidth + valueBoxWidth + gap * 2;
+  const totalWidth = labelBoxWidth + separatorWidth + valueBoxWidth + gap * 2;
   const startX = scaleX(blockX) + Math.round((scaleX(215) - totalWidth) / 2);
   const separatorX = startX + labelBoxWidth + gap;
   const valueX = separatorX + separatorWidth + gap;
@@ -232,29 +232,18 @@ const centerCompoundTitle = ({
 const layoutWeatherRow = ({
   temperatureWidgets,
   conditionWidgets,
-  humidityIcon,
-  humidityWidgets,
   condition,
 }) => {
   const temperatureWidth = scaleX(58);
   const conditionWidth = clamp(
-    measureTextWidth(condition, 16, 0, FONT_REGULAR) + scaleX(4),
+    measureTextWidth(condition, WEATHER_TEXT_SIZE, 0, FONT_REGULAR) + scaleX(4),
     scaleX(38),
     scaleX(174),
   );
-  const humidityIconWidth = scaleX(15);
-  const humidityValueWidth = scaleX(48);
   const itemGap = scaleX(10);
-  const humidityInnerGap = scaleX(5);
-  const humidityWidth =
-    humidityIconWidth + humidityInnerGap + humidityValueWidth;
-  const totalWidth =
-    temperatureWidth + conditionWidth + humidityWidth + itemGap * 2;
+  const totalWidth = temperatureWidth + conditionWidth + itemGap;
   const startX = Math.round((scaleX(DESIGN_WIDTH) - totalWidth) / 2);
   const conditionX = startX + temperatureWidth + itemGap;
-  const humidityIconX = conditionX + conditionWidth + itemGap;
-  const humidityValueX =
-    humidityIconX + humidityIconWidth + humidityInnerGap;
 
   temperatureWidgets.forEach((widget) => {
     widget.setProperty(hmUI.prop.X, startX);
@@ -264,15 +253,10 @@ const layoutWeatherRow = ({
     widget.setProperty(hmUI.prop.X, conditionX);
     widget.setProperty(hmUI.prop.W, conditionWidth);
   });
-  humidityIcon.setProperty(hmUI.prop.X, humidityIconX);
-  humidityWidgets.forEach((widget) => {
-    widget.setProperty(hmUI.prop.X, humidityValueX);
-    widget.setProperty(hmUI.prop.W, humidityValueWidth);
-  });
 };
 
-const createWeatherNumber = ({ x, y, w, h, type, color, showLevel }) => {
-  const root = color === "orange" ? "weather/orange" : "weather/muted";
+const createTemperatureNumber = ({ x, y, w, h, showLevel }) => {
+  const root = "weather/orange";
   const fontArray = [];
   for (let digit = 0; digit < 10; digit += 1) {
     fontArray.push(`${root}/${digit}.png`);
@@ -283,37 +267,28 @@ const createWeatherNumber = ({ x, y, w, h, type, color, showLevel }) => {
     y: scaleY(y),
     w: scaleX(w),
     h: scaleY(h),
-    type,
+    type: hmUI.data_type.WEATHER_CURRENT,
     font_array: fontArray,
     h_space: 0,
     // Right alignment prevents the temperature widget's maximum-width safety
     // box from turning into a visible gap before the condition text.
-    align_h: color === "orange" ? hmUI.align.RIGHT : hmUI.align.LEFT,
+    align_h: hmUI.align.RIGHT,
     show_level: showLevel,
   };
 
   if (SIMULATOR_PREVIEW) {
     // The native data type appends its configured unit image. Including the
     // TEXT_IMG `u` token here would render that unit a second time.
-    options.text = type === hmUI.data_type.WEATHER_CURRENT ? "24" : "20";
+    options.text = "24";
   }
 
-  if (color === "orange") {
-    options.negative_image = `${root}/minus.png`;
-    options.unit_en = `${root}/celsius.png`;
-    options.unit_sc = `${root}/celsius.png`;
-    options.unit_tc = `${root}/celsius.png`;
-    options.imperial_unit_en = `${root}/fahrenheit.png`;
-    options.imperial_unit_sc = `${root}/fahrenheit.png`;
-    options.imperial_unit_tc = `${root}/fahrenheit.png`;
-  } else {
-    options.unit_en = `${root}/percent.png`;
-    options.unit_sc = `${root}/percent.png`;
-    options.unit_tc = `${root}/percent.png`;
-    options.imperial_unit_en = `${root}/percent.png`;
-    options.imperial_unit_sc = `${root}/percent.png`;
-    options.imperial_unit_tc = `${root}/percent.png`;
-  }
+  options.negative_image = `${root}/minus.png`;
+  options.unit_en = `${root}/celsius.png`;
+  options.unit_sc = `${root}/celsius.png`;
+  options.unit_tc = `${root}/celsius.png`;
+  options.imperial_unit_en = `${root}/fahrenheit.png`;
+  options.imperial_unit_sc = `${root}/fahrenheit.png`;
+  options.imperial_unit_tc = `${root}/fahrenheit.png`;
 
   return hmUI.createWidget(hmUI.widget.TEXT_IMG, options);
 };
@@ -445,13 +420,6 @@ WatchFace({
       charSpace: 2,
     });
 
-    this.weatherHumidityIcon = hmUI.createWidget(hmUI.widget.IMG, {
-      x: scaleX(271),
-      y: scaleY(187),
-      src: "weather/rain.png",
-      show_level: NORMAL | AOD,
-    });
-
     this.normalDate = text({
       x: 111,
       y: 14,
@@ -559,22 +527,18 @@ WatchFace({
       showLevel: AOD,
     });
 
-    this.normalTemperature = createWeatherNumber({
+    this.normalTemperature = createTemperatureNumber({
       x: 106,
       y: 181,
       w: 58,
       h: 26,
-      type: hmUI.data_type.WEATHER_CURRENT,
-      color: "orange",
       showLevel: NORMAL,
     });
-    this.aodTemperature = createWeatherNumber({
+    this.aodTemperature = createTemperatureNumber({
       x: 106,
       y: 181,
       w: 58,
       h: 26,
-      type: hmUI.data_type.WEATHER_CURRENT,
-      color: "orange",
       showLevel: AOD,
     });
 
@@ -584,7 +548,7 @@ WatchFace({
       w: 104,
       h: 30,
       value: "Unknown",
-      size: 16,
+      size: WEATHER_TEXT_SIZE,
       color: COLORS.white,
       font: FONT_REGULAR,
     });
@@ -594,28 +558,9 @@ WatchFace({
       w: 104,
       h: 30,
       value: "Unknown",
-      size: 16,
+      size: WEATHER_TEXT_SIZE,
       color: COLORS.aodWhite,
       font: FONT_REGULAR,
-      showLevel: AOD,
-    });
-
-    this.normalHumidity = createWeatherNumber({
-      x: 288,
-      y: 183,
-      w: 42,
-      h: 23,
-      type: hmUI.data_type.HUMIDITY,
-      color: "muted",
-      showLevel: NORMAL,
-    });
-    this.aodHumidity = createWeatherNumber({
-      x: 288,
-      y: 183,
-      w: 42,
-      h: 23,
-      type: hmUI.data_type.HUMIDITY,
-      color: "muted",
       showLevel: AOD,
     });
 
@@ -779,9 +724,7 @@ WatchFace({
       const dateValue = `${weekday} ${safeCall(() => this.time.getDate(), 1)} ${month}`;
       const battery = safeNumber(safeCall(() => this.battery.getCurrent(), 0));
       const steps = safeNumber(safeCall(() => this.steps.getCurrent(), 0));
-      const stepTarget = safeNumber(
-        safeCall(() => this.steps.getTarget(), 0),
-      );
+      const stepTarget = safeNumber(safeCall(() => this.steps.getTarget(), 0));
       const calories = safeNumber(
         safeCall(() => this.calories.getCurrent(), 0),
       );
@@ -796,9 +739,7 @@ WatchFace({
           : ABSOLUTE_MAX_HEART_RATE;
       const sleepInfo = safeCall(() => this.sleep.getInfo(), {});
       const sleepMinutes = safeNumber(sleepInfo.totalTime);
-      const modernSleepTarget = safeNumber(
-        safeCall(() => getSleepTarget(), 0),
-      );
+      const modernSleepTarget = safeNumber(safeCall(() => getSleepTarget(), 0));
       const sleepTarget =
         modernSleepTarget > 0
           ? modernSleepTarget
@@ -812,8 +753,7 @@ WatchFace({
         safeCall(() => this.stand.getTarget(), 12),
         12,
       );
-      const stepTargetText =
-        stepTarget > 0 ? compactTarget(stepTarget) : "--";
+      const stepTargetText = stepTarget > 0 ? compactTarget(stepTarget) : "--";
       const calorieTargetText =
         calorieTarget > 0 ? formatThousands(calorieTarget) : "--";
       const sleepTargetText =
@@ -878,9 +818,7 @@ WatchFace({
         stepTarget > 0 ? 175 * clamp(steps / stepTarget, 0, 1) : 0,
       );
       const calorieWidth = Math.round(
-        calorieTarget > 0
-          ? 175 * clamp(calories / calorieTarget, 0, 1)
-          : 0,
+        calorieTarget > 0 ? 175 * clamp(calories / calorieTarget, 0, 1) : 0,
       );
       const sleepWidth = Math.round(
         171 * clamp(sleepMinutes / Math.max(sleepTarget, 1), 0, 1),
@@ -894,18 +832,12 @@ WatchFace({
             1,
           ),
       );
-      this.stepsProgress.setProperty(
-        hmUI.prop.VISIBLE,
-        stepTarget > 0,
-      );
+      this.stepsProgress.setProperty(hmUI.prop.VISIBLE, stepTarget > 0);
       this.stepsProgress.setProperty(
         hmUI.prop.W,
         scaleX(Math.max(stepWidth, 1)),
       );
-      this.caloriesProgress.setProperty(
-        hmUI.prop.VISIBLE,
-        calorieTarget > 0,
-      );
+      this.caloriesProgress.setProperty(hmUI.prop.VISIBLE, calorieTarget > 0);
       this.caloriesProgress.setProperty(
         hmUI.prop.W,
         scaleX(Math.max(calorieWidth, 1)),
@@ -933,8 +865,6 @@ WatchFace({
       layoutWeatherRow({
         temperatureWidgets: [this.normalTemperature, this.aodTemperature],
         conditionWidgets: [this.normalWeather, this.aodWeather],
-        humidityIcon: this.weatherHumidityIcon,
-        humidityWidgets: [this.normalHumidity, this.aodHumidity],
         condition: weatherLabel,
       });
     };
