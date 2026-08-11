@@ -6,7 +6,7 @@
 
 The regular face uses the supplied dark modernist grid, Archivo typography, orange progress accents, weather row, activity panels, and curved edge treatment. Its live values are time, date, battery, steps and target, calories and target, heart rate, sleep duration and goal progress, SpO2, PAI, standing progress, stress, current temperature, humidity, and the current weather label when available.
 
-The AOD version preserves the supplied black composition, outlined time, date, battery, temperature, weather label, and humidity while omitting the lower activity grid.
+The AOD version preserves the supplied black composition, outlined time, date, battery, temperature, weather label, and humidity while omitting the lower activity grid. The watch-face manifest enables its screen-off presentation with `lockscreen: 1`; the watch must be configured to have AOD follow the current watch face.
 
 ## Requirements
 

@@ -6,8 +6,8 @@
     "appType": "watchface",
     "_pikeCompatibled": 1,
     "version": {
-      "code": 2,
-      "name": "1.0.1"
+      "code": 3,
+      "name": "1.0.2"
     },
     "icon": "icon.png",
     "vender": "sifatul",
@@ -37,7 +37,7 @@
           "path": "watchface/index",
           "main": 1,
           "editable": 0,
-          "lockscreen": 0,
+          "lockscreen": 1,
           "hightCost": 0
         }
       },
