@@ -1,6 +1,6 @@
 {
   "name": "bip-boop",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "description": "Minimal coded watch face for Amazfit Bip Max",
   "scripts": {

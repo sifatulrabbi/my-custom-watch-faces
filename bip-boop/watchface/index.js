@@ -780,15 +780,13 @@ WatchFace({
       const battery = safeNumber(safeCall(() => this.battery.getCurrent(), 0));
       const steps = safeNumber(safeCall(() => this.steps.getCurrent(), 0));
       const stepTarget = safeNumber(
-        safeCall(() => this.steps.getTarget(), 10000),
-        10000,
+        safeCall(() => this.steps.getTarget(), 0),
       );
       const calories = safeNumber(
         safeCall(() => this.calories.getCurrent(), 0),
       );
       const calorieTarget = safeNumber(
-        safeCall(() => this.calories.getTarget(), 600),
-        600,
+        safeCall(() => this.calories.getTarget(), 0),
       );
       const heart = safeNumber(safeCall(() => this.heart.getLast(), 0));
       const age = safeNumber(safeCall(() => hmSetting.getUserData().age, 0));
@@ -814,8 +812,10 @@ WatchFace({
         safeCall(() => this.stand.getTarget(), 12),
         12,
       );
-      const stepTargetText = compactTarget(stepTarget);
-      const calorieTargetText = formatThousands(calorieTarget);
+      const stepTargetText =
+        stepTarget > 0 ? compactTarget(stepTarget) : "--";
+      const calorieTargetText =
+        calorieTarget > 0 ? formatThousands(calorieTarget) : "--";
       const sleepTargetText =
         sleepTarget > 0 ? compactDuration(sleepTarget) : "--";
 
@@ -875,10 +875,12 @@ WatchFace({
       });
 
       const stepWidth = Math.round(
-        175 * clamp(steps / Math.max(stepTarget, 1), 0, 1),
+        stepTarget > 0 ? 175 * clamp(steps / stepTarget, 0, 1) : 0,
       );
       const calorieWidth = Math.round(
-        175 * clamp(calories / Math.max(calorieTarget, 1), 0, 1),
+        calorieTarget > 0
+          ? 175 * clamp(calories / calorieTarget, 0, 1)
+          : 0,
       );
       const sleepWidth = Math.round(
         171 * clamp(sleepMinutes / Math.max(sleepTarget, 1), 0, 1),
@@ -893,8 +895,16 @@ WatchFace({
           ),
       );
       this.stepsProgress.setProperty(
+        hmUI.prop.VISIBLE,
+        stepTarget > 0,
+      );
+      this.stepsProgress.setProperty(
         hmUI.prop.W,
         scaleX(Math.max(stepWidth, 1)),
+      );
+      this.caloriesProgress.setProperty(
+        hmUI.prop.VISIBLE,
+        calorieTarget > 0,
       );
       this.caloriesProgress.setProperty(
         hmUI.prop.W,
