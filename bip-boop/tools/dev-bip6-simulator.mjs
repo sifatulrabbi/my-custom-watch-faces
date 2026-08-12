@@ -114,6 +114,10 @@ const syncWatchFace = async () => {
     join(previewRoot, 'watchface', 'index.js'),
     previewWatchFace
   )
+  await cp(
+    join(projectRoot, 'watchface', 'sleep-calculation.js'),
+    join(previewRoot, 'watchface', 'sleep-calculation.js')
+  )
 }
 
 await syncWatchFace()
@@ -125,7 +129,7 @@ if (process.argv.includes('--prepare-only')) {
 
 let syncTimer
 const sourceWatcher = watch(
-  join(projectRoot, 'watchface', 'index.js'),
+  join(projectRoot, 'watchface'),
   () => {
     clearTimeout(syncTimer)
     syncTimer = setTimeout(() => {

@@ -13,6 +13,7 @@ import {
   Weather,
 } from "@zos/sensor";
 import { getSleepTarget } from "@zos/settings";
+import { calculateSleepMinutes } from "./sleep-calculation.js";
 
 const DESIGN_WIDTH = 432;
 const DESIGN_HEIGHT = 514;
@@ -740,7 +741,16 @@ WatchFace({
           ? ABSOLUTE_MAX_HEART_RATE - age
           : ABSOLUTE_MAX_HEART_RATE;
       const sleepInfo = safeCall(() => this.sleep.getInfo(), {});
-      const sleepMinutes = safeNumber(sleepInfo.totalTime);
+      const sleepStages = safeCall(() => this.sleep.getStage(), []);
+      const sleepStageConstants = safeCall(
+        () => this.sleep.getStageConstantObj(),
+        {},
+      );
+      const sleepMinutes = calculateSleepMinutes(
+        sleepInfo.totalTime,
+        sleepStages,
+        sleepStageConstants.WAKE_STAGE,
+      );
       const modernSleepTarget = safeNumber(safeCall(() => getSleepTarget(), 0));
       const sleepTarget =
         modernSleepTarget > 0
