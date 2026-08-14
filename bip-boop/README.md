@@ -10,7 +10,7 @@ The displayed sleep duration subtracts awake sleep-stage intervals from the sens
 
 Step and calorie values and goals are read directly from the Zepp OS `Step` and `Calorie` sensors. If either goal is unavailable or zero, its header shows `--` and its orange progress indicator is hidden; the face does not substitute a hard-coded goal.
 
-The heart-rate progress bar treats 40 BPM as its lower bound and uses the age-based estimate `220 - age` as its upper bound. If the user age is unavailable, it falls back to 220 BPM. This is a visualization scale rather than a medical target or diagnosis.
+The heart-rate progress bar treats 40 BPM as its lower bound and uses the age from Zepp OS's permission-controlled user profile to estimate `220 - age` as its upper bound. If the user age is unavailable, it falls back to 220 BPM. This is a visualization scale rather than a medical target or diagnosis.
 
 The AOD version preserves the supplied black composition, outlined time, date, battery, temperature, and weather label while omitting the lower activity grid. The watch-face manifest enables its screen-off presentation with `lockscreen: 1`; the watch must be configured to have AOD follow the current watch face.
 

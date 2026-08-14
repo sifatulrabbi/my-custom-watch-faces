@@ -13,6 +13,7 @@ import {
   Weather,
 } from "@zos/sensor";
 import { getSleepTarget } from "@zos/settings";
+import { getProfile } from "@zos/user";
 import {
   getPositiveHealthValue,
   getSleepTotalTime,
@@ -747,7 +748,8 @@ WatchFace({
       const heart = getPositiveHealthValue(
         safeCall(() => this.heart.getLast(), null),
       );
-      const age = safeNumber(safeCall(() => hmSetting.getUserData().age, 0));
+      const profile = safeCall(() => getProfile(), {});
+      const age = safeNumber(profile.age);
       const maxHeartRate =
         age > 0 && age < 120
           ? ABSOLUTE_MAX_HEART_RATE - age

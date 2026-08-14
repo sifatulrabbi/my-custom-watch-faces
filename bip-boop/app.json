@@ -21,7 +21,8 @@
     "data:user.hd.sleep",
     "data:user.hd.spo2",
     "data:user.hd.pai",
-    "data:user.hd.stand"
+    "data:user.hd.stand",
+    "data:user.info"
   ],
   "runtime": {
     "apiVersion": {
