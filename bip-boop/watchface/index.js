@@ -833,7 +833,9 @@ WatchFace({
         calorieTarget > 0 ? 175 * clamp(calories / calorieTarget, 0, 1) : 0,
       );
       const sleepWidth = Math.round(
-        171 * clamp(sleepMinutes / Math.max(sleepTarget, 1), 0, 1),
+        sleepTarget > 0
+          ? 171 * clamp(sleepMinutes / sleepTarget, 0, 1)
+          : 0,
       );
       const heartWidth = Math.round(
         171 *
@@ -859,6 +861,7 @@ WatchFace({
         hmUI.prop.W,
         scaleX(Math.max(heartWidth, 1)),
       );
+      this.sleepProgress.setProperty(hmUI.prop.VISIBLE, sleepTarget > 0);
       this.sleepProgress.setProperty(
         hmUI.prop.W,
         scaleX(Math.max(sleepWidth, 1)),
