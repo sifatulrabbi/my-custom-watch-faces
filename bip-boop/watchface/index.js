@@ -722,7 +722,12 @@ WatchFace({
     });
 
     this.refresh = () => {
-      const hour = pad2(safeCall(() => this.time.getHours(), 0));
+      const hour = pad2(
+        safeCall(
+          () => this.time.getFormatHour(),
+          safeCall(() => this.time.getHours(), 0),
+        ),
+      );
       const minute = pad2(safeCall(() => this.time.getMinutes(), 0));
       const timeValue = `${hour}:${minute}`;
       const weekday =

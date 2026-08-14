@@ -4,7 +4,7 @@
 
 ## Current design
 
-The regular face uses the supplied dark modernist grid, Archivo typography, orange progress accents, weather row, activity panels, and curved edge treatment. Its live values are time, date, battery, steps and target, calories and target, heart rate, sleep duration and goal progress, SpO2, PAI, standing progress, stress, current temperature, and the current weather condition when available. The condition text is mapped from the watch weather forecast index; missing or index-25 data is shown as `Unknown` rather than a fixed condition.
+The regular face uses the supplied dark modernist grid, Archivo typography, orange progress accents, weather row, activity panels, and curved edge treatment. Its live values are time, date, battery, steps and target, calories and target, heart rate, sleep duration and goal progress, SpO2, PAI, standing progress, stress, current temperature, and the current weather condition when available. Time follows the watch's 12-hour or 24-hour system setting. The condition text is mapped from the watch weather forecast index; missing or index-25 data is shown as `Unknown` rather than a fixed condition.
 
 The displayed sleep duration subtracts awake sleep-stage intervals from the sensor's total session time so it matches the actual asleep duration shown by the official watch face. The face requests a fresh sleep-data update when it is built rather than waiting for Zepp OS's periodic background refresh. The sleep header reads the user-configured sleep goal through Zepp OS's `getSleepTarget()` settings API (minutes). Zepp returns `0` when no goal is available, so the face deliberately shows `--` and hides the goal progress bar rather than inventing a goal.
 
