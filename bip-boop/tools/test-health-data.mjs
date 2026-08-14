@@ -6,7 +6,25 @@ const source = await readFile(
   "utf8",
 );
 const moduleUrl = `data:text/javascript;base64,${Buffer.from(source).toString("base64")}`;
-const { getSuccessfulSpo2Value } = await import(moduleUrl);
+const {
+  getPositiveHealthValue,
+  getSleepTotalTime,
+  getSuccessfulSpo2Value,
+} = await import(moduleUrl);
+
+assert.equal(getPositiveHealthValue(72), 72);
+assert.equal(getPositiveHealthValue(0), null);
+assert.equal(getPositiveHealthValue(Number.NaN), null);
+assert.equal(getPositiveHealthValue(undefined), null);
+
+assert.equal(getSleepTotalTime({ totalTime: 396 }), 396);
+assert.equal(
+  getSleepTotalTime({ totalTime: 0 }),
+  0,
+  "zero is a valid recorded sleep duration",
+);
+assert.equal(getSleepTotalTime({}), null);
+assert.equal(getSleepTotalTime(null), null);
 
 assert.equal(
   getSuccessfulSpo2Value({ value: 98, retCode: 2 }),

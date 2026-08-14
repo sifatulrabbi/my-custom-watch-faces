@@ -13,7 +13,11 @@ import {
   Weather,
 } from "@zos/sensor";
 import { getSleepTarget } from "@zos/settings";
-import { getSuccessfulSpo2Value } from "./health-data.js";
+import {
+  getPositiveHealthValue,
+  getSleepTotalTime,
+  getSuccessfulSpo2Value,
+} from "./health-data.js";
 import { calculateSleepMinutes } from "./sleep-calculation.js";
 
 const DESIGN_WIDTH = 432;
@@ -735,29 +739,36 @@ WatchFace({
       const calorieTarget = safeNumber(
         safeCall(() => this.calories.getTarget(), 0),
       );
-      const heart = safeNumber(safeCall(() => this.heart.getLast(), 0));
+      const heart = getPositiveHealthValue(
+        safeCall(() => this.heart.getLast(), null),
+      );
       const age = safeNumber(safeCall(() => hmSetting.getUserData().age, 0));
       const maxHeartRate =
         age > 0 && age < 120
           ? ABSOLUTE_MAX_HEART_RATE - age
           : ABSOLUTE_MAX_HEART_RATE;
-      const sleepInfo = safeCall(() => this.sleep.getInfo(), {});
+      const sleepInfo = safeCall(() => this.sleep.getInfo(), null);
       const sleepStages = safeCall(() => this.sleep.getStage(), []);
       const sleepStageConstants = safeCall(
         () => this.sleep.getStageConstantObj(),
         {},
       );
-      const sleepMinutes = calculateSleepMinutes(
-        sleepInfo.totalTime,
-        sleepStages,
-        sleepStageConstants.WAKE_STAGE,
-      );
+      const sleepTotalTime = getSleepTotalTime(sleepInfo);
+      const sleepMinutes =
+        sleepTotalTime === null
+          ? null
+          : calculateSleepMinutes(
+              sleepTotalTime,
+              sleepStages,
+              sleepStageConstants.WAKE_STAGE,
+            );
       const modernSleepTarget = safeNumber(safeCall(() => getSleepTarget(), 0));
       const sleepTarget =
         modernSleepTarget > 0
           ? modernSleepTarget
           : safeNumber(safeCall(() => hmSetting.getSleepTarget(), 0));
       const stressResult = safeCall(() => this.stress.getCurrent(), {});
+      const stress = getPositiveHealthValue(stressResult.value);
       const spo2Result = safeCall(() => this.spo2.getCurrent(), {});
       const spo2 = getSuccessfulSpo2Value(spo2Result);
       const spo2Text = spo2 === null ? "--" : `${spo2}`;
@@ -772,6 +783,10 @@ WatchFace({
         calorieTarget > 0 ? formatThousands(calorieTarget) : "--";
       const sleepTargetText =
         sleepTarget > 0 ? compactDuration(sleepTarget) : "--";
+      const heartText = heart === null ? "--" : `${heart}`;
+      const sleepText =
+        sleepMinutes === null ? "--" : compactDuration(sleepMinutes);
+      const stressText = stress === null ? "--" : `${stress}`;
 
       setText(this.normalDate, dateValue);
       setText(this.aodDate, dateValue);
@@ -785,15 +800,15 @@ WatchFace({
       setText(this.stepsValue, formatThousands(steps));
       setText(this.caloriesGoalLabel, calorieTargetText);
       setText(this.caloriesValue, formatThousands(calories));
-      setText(this.heartValue, heart);
+      setText(this.heartValue, heartText);
       setText(this.sleepGoalLabel, sleepTargetText);
-      setText(this.sleepValue, compactDuration(sleepMinutes));
+      setText(this.sleepValue, sleepText);
       setText(this.spo2Value, spo2Text);
       setText(this.paiValue, pai);
       alignLeftMetricLabel(this.spo2Label, spo2Text);
       setText(this.standValue, `${stand}/${standTarget}`);
       alignLeftMetricLabel(this.standLabel, `${stand}/${standTarget}`, 26);
-      setText(this.stressValue, safeNumber(stressResult.value));
+      setText(this.stressValue, stressText);
 
       centerCompoundTitle({
         labelWidget: this.stepsTitleLabel,
@@ -835,14 +850,14 @@ WatchFace({
         calorieTarget > 0 ? 175 * clamp(calories / calorieTarget, 0, 1) : 0,
       );
       const sleepWidth = Math.round(
-        sleepTarget > 0
+        sleepTarget > 0 && sleepMinutes !== null
           ? 171 * clamp(sleepMinutes / sleepTarget, 0, 1)
           : 0,
       );
       const heartWidth = Math.round(
         171 *
           clamp(
-            (heart - MIN_HEART_RATE) /
+            ((heart || 0) - MIN_HEART_RATE) /
               Math.max(maxHeartRate - MIN_HEART_RATE, 1),
             0,
             1,
@@ -858,12 +873,15 @@ WatchFace({
         hmUI.prop.W,
         scaleX(Math.max(calorieWidth, 1)),
       );
-      this.heartProgress.setProperty(hmUI.prop.VISIBLE, heart > 0);
+      this.heartProgress.setProperty(hmUI.prop.VISIBLE, heart !== null);
       this.heartProgress.setProperty(
         hmUI.prop.W,
         scaleX(Math.max(heartWidth, 1)),
       );
-      this.sleepProgress.setProperty(hmUI.prop.VISIBLE, sleepTarget > 0);
+      this.sleepProgress.setProperty(
+        hmUI.prop.VISIBLE,
+        sleepTarget > 0 && sleepMinutes !== null,
+      );
       this.sleepProgress.setProperty(
         hmUI.prop.W,
         scaleX(Math.max(sleepWidth, 1)),
