@@ -4,7 +4,7 @@
   "private": true,
   "description": "Minimal coded watch face for Amazfit Bip Max",
   "scripts": {
-    "test": "node tools/test-sleep-calculation.mjs",
+    "test": "node tools/test-sleep-calculation.mjs && node tools/test-health-data.mjs",
     "dev": "zeus dev",
     "dev:bip6": "node tools/dev-bip6-simulator.mjs",
     "prepare:bip6": "node tools/dev-bip6-simulator.mjs --prepare-only",

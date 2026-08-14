@@ -118,6 +118,10 @@ const syncWatchFace = async () => {
     join(projectRoot, 'watchface', 'sleep-calculation.js'),
     join(previewRoot, 'watchface', 'sleep-calculation.js')
   )
+  await cp(
+    join(projectRoot, 'watchface', 'health-data.js'),
+    join(previewRoot, 'watchface', 'health-data.js')
+  )
 }
 
 await syncWatchFace()

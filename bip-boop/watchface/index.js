@@ -13,6 +13,7 @@ import {
   Weather,
 } from "@zos/sensor";
 import { getSleepTarget } from "@zos/settings";
+import { getSuccessfulSpo2Value } from "./health-data.js";
 import { calculateSleepMinutes } from "./sleep-calculation.js";
 
 const DESIGN_WIDTH = 432;
@@ -758,7 +759,8 @@ WatchFace({
           : safeNumber(safeCall(() => hmSetting.getSleepTarget(), 0));
       const stressResult = safeCall(() => this.stress.getCurrent(), {});
       const spo2Result = safeCall(() => this.spo2.getCurrent(), {});
-      const spo2 = safeNumber(spo2Result.value);
+      const spo2 = getSuccessfulSpo2Value(spo2Result);
+      const spo2Text = spo2 === null ? "--" : `${spo2}`;
       const pai = safeNumber(safeCall(() => this.pai.getTotal(), 0));
       const stand = safeNumber(safeCall(() => this.stand.getCurrent(), 0));
       const standTarget = safeNumber(
@@ -786,9 +788,9 @@ WatchFace({
       setText(this.heartValue, heart);
       setText(this.sleepGoalLabel, sleepTargetText);
       setText(this.sleepValue, compactDuration(sleepMinutes));
-      setText(this.spo2Value, spo2);
+      setText(this.spo2Value, spo2Text);
       setText(this.paiValue, pai);
-      alignLeftMetricLabel(this.spo2Label, spo2);
+      alignLeftMetricLabel(this.spo2Label, spo2Text);
       setText(this.standValue, `${stand}/${standTarget}`);
       alignLeftMetricLabel(this.standLabel, `${stand}/${standTarget}`, 26);
       setText(this.stressValue, safeNumber(stressResult.value));
