@@ -904,6 +904,7 @@ WatchFace({
       });
     };
 
+    safeCall(() => this.sleep.updateInfo(), null);
     this.refresh();
     this.time.onPerMinute(this.refresh);
   },
