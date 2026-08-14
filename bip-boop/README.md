@@ -32,10 +32,10 @@ Versions observed on 2026-08-10:
 | Watch-face preview resolution | `294 x 350` |
 | Target device Zepp OS | 5.0 |
 | Latest Bip Max API level | 4.4 |
-| Project runtime API baseline | 2.0.0 (supported by the Bip Max 4.4 runtime) |
+| Project runtime API baseline | 2.1.0 (supported by the Bip Max 4.4 runtime) |
 | Bip Max `deviceSource` | `11206915` |
 
-The Zeus 1.9.3 watch-face wizard currently offers API template baselines 1.0 and 2.0. This project uses the newest offered baseline, 2.0, while explicitly targeting the current Bip Max device entry. The older API baseline keeps the small watch face compatible with the Bip Max's newer 4.4 runtime; it does not claim that the Bip Max itself is an API 2.0 device.
+The Zeus 1.9.3 watch-face wizard currently offers API template baselines 1.0 and 2.0. This project uses API level 2.1 so the time display can update on the system minute event instead of polling every second. The dedicated Bip Max target runs API level 4.4 and supports this baseline.
 
 ## Development
 
@@ -164,7 +164,7 @@ bip-boop/
 | `npm run dev`, choosing Bip Max target | Built, connected, installed/refreshed but is not a native Bip 6 package |
 | `npm run dev:bip6`, choosing Bip 6 | Built, connected, and installed as `bip-boop-plain-orange Preview` without changing production target configuration |
 | Hot reload | Passed; source change rebuilt and refreshed |
-| Bip 6 fallback runtime | Corrected to Zepp OS 2.0 module imports; latest simulator run logged no new runtime error |
+| Bip 6 fallback runtime | Uses Zepp OS module imports and the API 2.1 minute event; latest simulator run logged no new runtime error |
 | Final regular/AOD visual check | Pending owner-run simulator test as requested |
 | `zeus preview` | Not run; requires explicit authorization to upload the package plus possible Zepp login/QR scan |
 | Real Bip Max installation | Manual owner step remains |

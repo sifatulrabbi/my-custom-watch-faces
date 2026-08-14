@@ -905,10 +905,6 @@ WatchFace({
     };
 
     this.refresh();
-    this.clockTimer = setInterval(this.refresh, 1000);
-  },
-
-  onDestroy() {
-    if (this.clockTimer) clearInterval(this.clockTimer);
+    this.time.onPerMinute(this.refresh);
   },
 });
